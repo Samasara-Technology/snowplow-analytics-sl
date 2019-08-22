@@ -230,7 +230,7 @@
                         "value": "SQL Server - Select"
                     },
                     "notes": {
-                        "value": "Select key matching fields to support matching of anonymous web visitors to known visitors. There are additional processes that match based on email, communities id, contact id, membership number.\n\nThis pipeline must run in a groundplex since it needs access to an on premise SQLServer."
+                        "value": "Select key matching fields to support matching of anonymous web visitors to known visitors. There are additional processes that match based on email, communities id, contact id, membership number.\n\nThis data will be merged into the a database in Snowflake.  The database is SNOWPLOW.SFDC_REPL.USER_INFO.\n\nThis pipeline must run in a groundplex since it needs access to an on premise SQLServer."
                     }
                 },
                 "output": {
