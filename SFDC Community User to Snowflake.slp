@@ -297,7 +297,7 @@
                     },
                     "limitRows": {
                         "expression": false,
-                        "value": "100"
+                        "value": null
                     },
                     "matchDataTypes": {
                         "value": false
