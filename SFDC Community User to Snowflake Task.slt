@@ -1,0 +1,77 @@
+{
+    "job_class": "PipelineJob",
+    "job_name": "SFDC Community User to Snowflake Task",
+    "note": "",
+    "parameters": {
+        "enabled": true,
+        "execution_timeout": null,
+        "include_external_urls": false,
+        "job_alias": null,
+        "job_type": "standard",
+        "llfeed_token": "Qqo1ikIAz28EgwH07zSFwoM1R9cHa3bC",
+        "max_failures": 10,
+        "max_in_flight": 200,
+        "notification": {
+            "recipients": null
+        },
+        "num_instances": 1,
+        "pipeline_parameters": {
+            "Database_Name": "SalesForceRepl",
+            "Snowflake_Database": "SNOWPLOW",
+            "Snowflake_Warehouse": "DEV_BI",
+            "mssql_database_name": "SalesForceRepl",
+            "mssql_server_name": "950pbi02.aaanet.com"
+        },
+        "pipeline_path": "SFDC Community User to Snowflake",
+        "snaplex_path": "ProdGroundPlex02"
+    },
+    "schedule": {
+        "repeat": {
+            "blackout_dates": [],
+            "by": "days",
+            "cron": {
+                "day": "*",
+                "day_of_week": "*",
+                "hour": "*",
+                "minute": "*",
+                "month": "*"
+            },
+            "ends": {
+                "occurrences": null,
+                "when": "never"
+            },
+            "every": 1,
+            "on": {
+                "day": []
+            }
+        },
+        "start_date": "2019-09-04",
+        "start_time": "09:00:00",
+        "time_zone": "US/Eastern"
+    },
+    "trigger": {
+        "repeat": {
+            "blackout_dates": [],
+            "by": "days",
+            "cron": {
+                "day": "*",
+                "day_of_week": "*",
+                "hour": "*",
+                "minute": "*",
+                "month": "*"
+            },
+            "ends": {
+                "occurrences": null,
+                "when": "never"
+            },
+            "every": 1,
+            "on": {
+                "day": []
+            }
+        },
+        "start_date": "2019-09-04",
+        "start_time": "09:00:00",
+        "time_zone": "US/Eastern"
+    },
+    "trigger_type": "ScheduleTrigger"
+}
