@@ -297,7 +297,7 @@
                     },
                     "limitRows": {
                         "expression": false,
-                        "value": "100"
+                        "value": null
                     },
                     "matchDataTypes": {
                         "value": false
@@ -698,12 +698,6 @@
                             {
                                 "sqlStatement": {
                                     "expression": false,
-                                    "value": "-- pass 5 - \ninsert into atomic.user_mapping (domain_userid, user_id, user_id_type)\n  select um.domain_userid, ui.contact_id as user_id, 'SFDC_CONTACT_ID' as user_id_type\n  from atomic.user_mapping um join snowplow.sfdc_repl.user_info ui\n    on um.user_id = ui.email_address and um.user_id_type = 'EMAIL'\n  where \n    user_id_type = 'EMAIL'\n  group by 1, 2, 3\n;"
-                                }
-                            },
-                            {
-                                "sqlStatement": {
-                                    "expression": false,
                                     "value": "-- pass 6 - use full membership no from the renew site\ninsert into atomic.user_mapping (domain_userid, user_id, user_id_type)\n  with step_1  (collector_tstamp, domain_userid, event_id, membership_number,postal_code, id_length) as \n  (\n    select collector_tstamp, domain_userid, event_id\n    ,replace(UNSTRUCT_EVENT_COM_SNOWPLOWANALYTICS_SNOWPLOW_SUBMIT_FORM_1:elements[0].value, ' ', '')  ||\n     UNSTRUCT_EVENT_COM_SNOWPLOWANALYTICS_SNOWPLOW_SUBMIT_FORM_1:elements[1].value as membernumber\n    ,UNSTRUCT_EVENT_COM_SNOWPLOWANALYTICS_SNOWPLOW_SUBMIT_FORM_1:elements[2].value as postal_code\n    , length (replace(UNSTRUCT_EVENT_COM_SNOWPLOWANALYTICS_SNOWPLOW_SUBMIT_FORM_1:elements[0].value, ' ', '')  ||\n     UNSTRUCT_EVENT_COM_SNOWPLOWANALYTICS_SNOWPLOW_SUBMIT_FORM_1:elements[1].value) as id_length\n\n    from \n    snowplow.atomic.events\n    where refr_urlhost in ( 'renew.carolinas.aaa.com') --'members.carolinas.aaa.com', \n    --and event = 'page_view'\n    and page_urlquery is not null\n    and UNSTRUCT_EVENT_COM_SNOWPLOWANALYTICS_SNOWPLOW_SUBMIT_FORM_1 is not null\n    and UNSTRUCT_EVENT_COM_SNOWPLOWANALYTICS_SNOWPLOW_SUBMIT_FORM_1:elements[0].name = 'clubPrefix'\n    --and user_id is not null\n    order by collector_tstamp desc\n  )\n  select \n      step_1.domain_userid as domain_userid, \n      step_1.membership_number as user_id, \n      'FULL_MEMBERSHIP_NO' as user_id_type  \n    from step_1 join \"PROD_STAGE\".\"FINS\".\"MEMBERSHIPEXPORT\" me\n      on step_1.membership_number = me.fullmembernum  and step_1.postal_code = left(me.ZIP, 5)\n    group by 1, 2, 3;"
                                 }
                             },
@@ -711,6 +705,12 @@
                                 "sqlStatement": {
                                     "expression": false,
                                     "value": "-- pass 7 - members ( query params, form post with email)\ninsert into atomic.user_mapping (domain_userid, user_id, user_id_type)\n  with step_1 (domain_userid, Account_id, Contact_id, Email_Address) as\n\n  (select \n      domain_userid,\n      split (split (page_urlquery, '&')[0], '=')[1] as Account_Id, \n      split (split (page_urlquery, '&')[1], '=')[1] as Contact_Id,\n      replace (split (split (page_urlquery, '&')[2], '=')[1], '%40', '@') as Email_Address\n  from atomic.events e\n  where e.page_urlhost = 'members.carolinas.aaa.com'\n    and e.page_urlquery like 'accid=%'\n    and (refr_urlquery is not null or page_urlquery is not null)\n    and split (split (page_urlquery, '&')[2], '=')[0] = 'customerEmailAddress'\n  group by 1,2,3,4\n  ),\n  contacts as \n    (select domain_userid, CONTACT_ID as user_id, 'SFDC_CONTACT_ID' as user_id_type from step_1 group by 1,2,3 ),\n  emails as \n    (select domain_userid, Email_Address as user_id, 'EMAIL' as user_id_type from step_1  group by 1,2,3 )\n\n  select domain_userid, user_id, user_id_type from emails\n  union \n  select domain_userid, user_id, user_id_type from contacts\n\n  ;"
+                                }
+                            },
+                            {
+                                "sqlStatement": {
+                                    "expression": false,
+                                    "value": "-- pass 5 - \ninsert into atomic.user_mapping (domain_userid, user_id, user_id_type)\n  select um.domain_userid, ui.contact_id as user_id, 'SFDC_CONTACT_ID' as user_id_type\n  from atomic.user_mapping um join snowplow.sfdc_repl.user_info ui\n    on um.user_id = ui.email_address and um.user_id_type = 'EMAIL'\n  where \n    user_id_type = 'EMAIL'\n  group by 1, 2, 3\n;"
                                 }
                             },
                             {
